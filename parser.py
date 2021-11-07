@@ -23,14 +23,14 @@ def main():
             vacancy_page = requests.get(vacancy_link)
             vacancy_content = BeautifulSoup(vacancy_page.content, "html.parser")
             vacancy_description = vacancy_content.find("div", class_="style-ugc").extract()
-            print(vacancy_description.get_text())
+
             vacancies_data["list"][link.a["href"]] = {}
             vacancies_data["list"][link.a["href"]]["company_name"] = company.a.string
             vacancies_data["list"][link.a["href"]]["vacancy_name"] = vacancy_name.a.string
             vacancies_data["list"][link.a["href"]]["vacancy_additions"] = vacancy_additions.get_text()
             vacancies_data["list"][link.a["href"]]["vacancy_skills"] = vacancy_skills.get_text()
             vacancies_data["list"][link.a["href"]]["vacancy_description"] = vacancy_description.get_text()
-            print(vacancies_data["list"][link.a["href"]])
+            print("Получено ", len(vacancies_data["list"]), " вакансий.")
 
     with open('vacancies.json', 'w', encoding="utf8") as f:
         json.dump(vacancies_data, f)
