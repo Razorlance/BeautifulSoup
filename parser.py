@@ -1,5 +1,6 @@
 import requests
 import json
+from tqdm import tqdm
 from bs4 import BeautifulSoup
 
 habr_link = "https://career.habr.com/vacancies?type=all&page="
@@ -13,7 +14,7 @@ def main():
         vacancies = requests.get(habr_link + str(page))
         sp = BeautifulSoup(vacancies.content, "html.parser")
         all_cards = sp.find_all("div", class_="vacancy-card__info")
-        for card in all_cards:
+        for card in tqdm(all_cards, "parsing cards..."):
             company = card.find("div", class_="vacancy-card__company-title")
             vacancy_name = card.find("div", class_="vacancy-card__title")
             vacancy_additions = card.find("div", class_="vacancy-card__meta")
@@ -30,7 +31,6 @@ def main():
             vacancies_data["list"][link.a["href"]]["vacancy_additions"] = vacancy_additions.get_text()
             vacancies_data["list"][link.a["href"]]["vacancy_skills"] = vacancy_skills.get_text()
             vacancies_data["list"][link.a["href"]]["vacancy_description"] = vacancy_description.get_text()
-            print("Получено ", len(vacancies_data["list"]), " вакансий.")
 
     with open('vacancies.json', 'w', encoding="utf8") as f:
         json.dump(vacancies_data, f)
